@@ -11,7 +11,7 @@ getCalibration ls = (head ls) * 10 + (last ls)
 processCases :: Show b => ([String] -> b) -> String -> IO ()
 processCases f = print . f . lines
 
-calibrationSum ::  (String -> [Int] ) -> [String] -> Int
+calibrationSum ::  (String -> [Int]) -> [String] -> Int
 calibrationSum f = sum . map (getCalibration . f)
 
 getDigits1 :: String -> [Int]
