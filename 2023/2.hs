@@ -10,7 +10,7 @@ main = do
     processCases (catMaybes . map playable) $ contents
     processCases (map power) $ contents
 
-processCases :: (Show b, Foldable t, Num b) => ([Game] -> t b) -> String -> IO ()
+processCases :: ([Game] -> [Int]) -> String -> IO ()
 processCases f = print . sum . f . map toGame . lines
 
 data Game  = Game Int Draws
