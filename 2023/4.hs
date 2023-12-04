@@ -6,9 +6,9 @@ import Data.List (foldl')
 
 main :: IO ()
 main = do
-    cards <- map makeCard . lines <$> readFile "input_4.txt"
-    print . sum . map getPoints $ cards
-    print . getNumCards . map getMatches $ cards
+    matches <- map (getMatches. makeCard) . lines <$> readFile "input_4.txt"
+    print . sum . map getPoints $ matches
+    print . getNumCards $ matches
 
 data Card = Card Int (Set Int) (Set Int)
 
@@ -23,8 +23,8 @@ makeCard line = Card id winners current
 getMatches :: Card -> Int
 getMatches (Card _ winners current) = size (intersection winners current)
 
-getPoints :: Card -> Int
-getPoints = (\matching -> if matching == 0 then 0 else 2 ^ (matching - 1)) . getMatches
+getPoints :: Int -> Int
+getPoints matches = if matches == 0 then 0 else 2 ^ (matches - 1)
 
 getNumCards :: [Int] -> Int
 getNumCards matches = snd . foldl' folder (cards, 0) $ matches
