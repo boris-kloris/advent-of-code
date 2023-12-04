@@ -16,7 +16,7 @@ pad str = "." ++ str ++ "."
 padLines :: [String] -> [String]
 padLines strs = [padLine] ++ strs ++ [padLine]
     where
-        padLine = (take . length . head $ strs) . repeat $ '.'
+        padLine = replicate (length . head $ strs) '.'
 
 matchUp :: [a] -> [(a, a, a)]
 matchUp ls = zip3 ls (tail ls) (tail . tail $ ls)
@@ -44,7 +44,7 @@ folder (soFar, curr, total) (c, t)
 expandNumbers :: String -> [String]
 expandNumbers = concatMap repeatLength . snd . foldr readNumbers ("", [])
     where
-        repeatLength x = (take . length $ x) . repeat $ x
+        repeatLength x = replicate (length x) x
 
 readNumbers :: Char -> (String, [String]) -> (String, [String])
 readNumbers c (soFar, ls)

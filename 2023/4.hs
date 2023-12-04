@@ -29,8 +29,8 @@ getPoints = (\matching -> if matching == 0 then 0 else 2 ^ (matching - 1)) . get
 getNumCards :: [Int] -> Int
 getNumCards matches = snd . foldl' folder (cards, 0) $ matches
     where
-        cards = take (length matches) . repeat $ 1
+        cards = replicate (length matches) 1
 
 folder :: ([Int], Int) -> Int -> ([Int], Int)
 folder ([],   total) _ = ([], total)
-folder (n:ns, total) m = (zipWith (+) ns ((take m . repeat $ n) ++ repeat 0), total + n)
+folder (n:ns, total) m = (zipWith (+) ns (replicate m n ++ repeat 0), total + n)
