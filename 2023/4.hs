@@ -6,8 +6,7 @@ import Data.List (foldl')
 
 main :: IO ()
 main = do
-    contents <- readFile "input_4.txt"
-    let cards = map makeCard . lines $ contents
+    cards <- map makeCard . lines <$> readFile "input_4.txt"
     print . sum . map getPoints $ cards
     print . getNumCards . map getMatches $ cards
 
@@ -28,10 +27,10 @@ getPoints :: Card -> Int
 getPoints = (\matching -> if matching == 0 then 0 else 2 ^ (matching - 1)) . getMatches
 
 getNumCards :: [Int] -> Int
-getNumCards points = snd . foldl' folder (cards, 0) $ points
+getNumCards matches = snd . foldl' folder (cards, 0) $ matches
     where
-        cards = take (length points) . repeat $ 1
+        cards = take (length matches) . repeat $ 1
 
 folder :: ([Int], Int) -> Int -> ([Int], Int)
 folder ([],   total) _ = ([], total)
-folder (n:ns, total) a = (zipWith (+) ns ((take a . repeat $ n) ++ repeat 0), total + n)
+folder (n:ns, total) m = (zipWith (+) ns ((take m . repeat $ n) ++ repeat 0), total + n)
