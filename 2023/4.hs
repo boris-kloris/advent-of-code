@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 import Data.Set (Set, fromList, intersection, size)
-import Data.Text (pack, splitOn, drop, strip, unpack)
+import Data.Text (pack, splitOn, strip, unpack)
 import Data.List (foldl')
 
 main :: IO ()
@@ -10,18 +10,17 @@ main = do
     print . sum . map getPoints $ matches
     print . getNumCards $ matches
 
-data Card = Card Int (Set Int) (Set Int)
+data Card = Card (Set Int) (Set Int)
 
 makeCard :: String -> Card
-makeCard line = Card id winners current
+makeCard line = Card winners current
     where
-        [header, desc] = splitOn ":" . pack $ line
-        id = read . unpack . strip . Data.Text.drop 5 $ header :: Int
+        [_, desc] = splitOn ":" . pack $ line
         toSet = fromList . map (read :: String -> Int) . words . unpack . strip
         [winners, current] = map toSet . splitOn "|" $ desc
         
 getMatches :: Card -> Int
-getMatches (Card _ winners current) = size (intersection winners current)
+getMatches (Card winners current) = size (intersection winners current)
 
 getPoints :: Int -> Int
 getPoints matches = if matches == 0 then 0 else 2 ^ (matches - 1)
