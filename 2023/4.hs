@@ -15,7 +15,7 @@ data Card = Card Int (Set Int) (Set Int)
 makeCard :: String -> Card
 makeCard line = Card id winners current
     where
-        [header, desc] = splitOn ":" (pack line)
+        [header, desc] = splitOn ":" . pack $ line
         id = read . unpack . strip . Data.Text.drop 5 $ header :: Int
         toSet = fromList . map (read :: String -> Int) . words . unpack . strip
         [winners, current] = map toSet . splitOn "|" $ desc

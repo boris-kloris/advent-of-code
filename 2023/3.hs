@@ -29,7 +29,7 @@ getContext (prev, curr, next) = zip (tail curr) summation
         neighbours = zipWith (\a b -> [a, b]) curr (tail . tail $ curr)
         context = zipWith (++) rowContext neighbours
         isSymbol x = not (isDigit x) && (x /= '.')
-        summation = (map (any isSymbol) context) ++ [False]
+        summation = map (any isSymbol) context ++ [False]
 
 getSums :: [(Char, Bool)] -> Int
 getSums = getThird . foldl' folder (False, 0, 0)
@@ -42,9 +42,7 @@ folder (soFar, curr, total) (c, t)
     | otherwise = (False, 0, total + if soFar then curr else 0)
 
 expandNumbers :: String -> [String]
-expandNumbers = concatMap repeatLength . snd . foldr readNumbers ("", [])
-    where
-        repeatLength x = replicate (length x) x
+expandNumbers = concatMap (length >>= replicate) . snd . foldr readNumbers ("", [])
 
 readNumbers :: Char -> (String, [String]) -> (String, [String])
 readNumbers c (soFar, ls)
