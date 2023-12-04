@@ -50,11 +50,12 @@ readNumbers c (soFar, ls)
     | otherwise = ("", [[c]] ++ (if soFar == "" then [] else [soFar]) ++ ls)
 
 getPowers :: ([String], [String], [String]) -> Int
-getPowers (prev, curr, next) = sum (zipWith (\a b -> if (a == "*" && length b == 2) then product b else 0) (tail curr) nums)
+getPowers (prev, curr, next) = sum (zipWith (\a b -> if isGear a b then product b else 0) (tail curr) nums)
     where
-        isNum x = isDigit . head $ x
+        isNum = isDigit . head
         diag ls = zipWith3 (\a b c -> if isNum b then [b] else filter isNum [a, c]) 
                     ls (tail ls) (tail . tail $ ls)
         nei = zipWith (\a b -> filter isNum [a, b]) curr (tail . tail $ curr)
         context = zipWith3 (\a b c -> a ++ b ++ c) (diag prev) nei (diag next)
         nums = (map . map) (read :: String -> Int) context
+        isGear a b = a == "*" && length b == 2
