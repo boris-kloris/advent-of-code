@@ -13,7 +13,7 @@ main = do
     print . minimum . map (($ maps) . foldl' mapOne) $ seeds
 
     let seedRanges = liftM2 zip (indices even) (indices odd) $ seeds
-    print . minimum . map fst . foldl' (\s m -> concatMap (mapRange m) s) seedRanges $ maps
+    print . minimum . map fst . foldl' (flip (concatMap . mapRange)) seedRanges $ maps
 
 type Map = [[Int]]
 type Range = (Int, Int)
