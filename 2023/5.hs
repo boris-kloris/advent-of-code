@@ -13,10 +13,10 @@ main = do
     print . minimum . map (($ maps) . foldl' mapIt) $ seeds
 
     let seedRanges = liftM2 zip (indices even) (indices odd) $ seeds
-    print .  minimum . map fst . foldl' (\s m -> concatMap (mapRange m) s) seedRanges $ maps
+    print . minimum . map fst . foldl' (\s m -> concatMap (mapRange m) s) seedRanges $ maps
 
 readMaps :: Text -> [[Int]]
-readMaps = sortBy (\(_:a:_) (_:b:_) -> compare a b) . map (map (read :: String -> Int) . words) . tail . lines . unpack
+readMaps = sortBy (\(_:a:_) (_:b:_) -> compare a b) . (map . map) (read :: String -> Int) . map words . tail . lines . unpack
 
 mapIt :: Int -> [[Int]] -> Int
 mapIt a [] = a
@@ -31,8 +31,10 @@ indices f = map snd . filter (f . fst). zip [0..]
 mapRange :: [[Int]] -> (Int, Int) -> [(Int, Int)]
 mapRange [] (start, range) = if range <= 0 then [] else [(start, range)] 
 mapRange m@([dest, origin, span]:ls) r@(start, range)
-    | range <= 0              = []
-    | start + range <= origin = [r]
-    | start < origin          = (start, origin - start) : mapRange m (origin, range - (origin - start))
-    | start >= origin + span  = mapRange ls r
-    | otherwise               = (dest + (start - origin), min range (span - (start - origin))) : mapRange ls (origin + span, range - (origin + span - start))
+    | range <= 0       = []
+    | gap <= (-range)  = [r]
+    | gap < 0          = (start, (-gap)) : mapRange m (origin, range + gap)
+    | gap >= span      = mapRange ls r
+    | otherwise        = (dest + gap, min range (span - gap)) : mapRange ls (origin + span, range + gap - span)
+    where
+        gap = start - origin
