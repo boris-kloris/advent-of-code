@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 import Data.Text (pack, splitOn, unpack, strip, Text)
-import Data.List (sortBy, foldl', foldl1')
+import Data.List (sortBy, foldl')
 import Control.Monad (liftM2)
 
 main :: IO ()
