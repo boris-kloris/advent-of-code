@@ -35,4 +35,4 @@ mapRange m@([dest, origin, span]:ls) r@(start, range)
     | start + range <= origin = [r]
     | start < origin          = (start, origin - start) : mapRange m (origin, range - (origin - start))
     | start >= origin + span  = mapRange ls r
-    | otherwise               = (dest + (start - origin), min span range) : mapRange ls (origin + span, range - (origin + span - start))
+    | otherwise               = (dest + (start - origin), min range (span - (start - origin))) : mapRange ls (origin + span, range - (origin + span - start))
