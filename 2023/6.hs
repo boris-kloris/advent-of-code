@@ -1,27 +1,29 @@
+import Data.List (foldl1')
+
 main :: IO ()
 main = do
     contents <- lines <$> readFile "input_6.txt"
+    let input = pure (getTail .) <*> [head, last] <*> pure contents
 
-    let times = tail . dropWhile (/= ':') . head $ contents
-    let distances = tail . dropWhile (/= ':') . last $ contents
+    print . product . (foldl1' . zipWith) numButtonTimes1 . map extract $ input
+    print . foldl1' numButtonTimes2 . map glue $ input
 
-    print . product $ zipWith numDistances (extract times) (extract distances)
-    print $ getNum (glue times) (glue distances)
+getTail :: String -> String
+getTail = tail . dropWhile (/= ':')
 
 extract :: String -> [Int]
 extract = map (read :: String -> Int) . words
 
 glue :: String -> Int
-glue = (read :: String -> Int) . concat . words
+glue = (read :: String -> Int) . filter (/= ' ')
 
-distanceCovered :: Int -> Int -> Int
-distanceCovered maxTime buttonTime = buttonTime * (maxTime - buttonTime)
+numButtonTimes1 :: Int -> Int -> Int
+numButtonTimes1 time maxDistance = length . filter (> maxDistance). map (distanceCovered time) $ [0..time]
+    where
+        distanceCovered maxTime buttonTime = buttonTime * (maxTime - buttonTime)
 
-numDistances :: Int -> Int -> Int
-numDistances time maxDistance = length . filter (> maxDistance). map (distanceCovered time) $ [0..time]
-
-getNum :: Int -> Int -> Int
-getNum t d = floor root1 - ceiling root2 + 1 - takeAwayIfInt root1 - takeAwayIfInt root2
+numButtonTimes2 :: Int -> Int -> Int
+numButtonTimes2 t d = floor root1 - ceiling root2 + 1 - takeAwayIfInt root1 - takeAwayIfInt root2
     where
         discriminant = t * t - 4 * d
         rootD = sqrt . fromIntegral $ discriminant :: Double
