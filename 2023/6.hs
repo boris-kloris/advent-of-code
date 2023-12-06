@@ -3,13 +3,10 @@ import Data.List (foldl1')
 main :: IO ()
 main = do
     contents <- lines <$> readFile "input_6.txt"
-    let input = pure (getTail .) <*> [head, last] <*> pure contents
+    let input = tail . dropWhile (/= ':') <$> contents
 
     print . product . (foldl1' . zipWith) numButtonTimes1 . map extract $ input
     print . foldl1' numButtonTimes2 . map glue $ input
-
-getTail :: String -> String
-getTail = tail . dropWhile (/= ':')
 
 extract :: String -> [Int]
 extract = map (read :: String -> Int) . words
