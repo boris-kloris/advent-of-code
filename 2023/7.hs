@@ -1,11 +1,10 @@
-import Control.Monad (ap)
 import Data.List (sortBy, elemIndex, sort, group)
 import Data.Ord (comparing)
 import Data.Maybe (fromMaybe)
 
 main :: IO ()
 main = do
-    bids <- map (makeBid . head . ap zip tail . words) . lines <$> readFile "input_7.txt"
+    bids <- map (makeBid . head . (zip <*> tail) . words) . lines <$> readFile "input_7.txt"
     solve Part1Hand bids
     solve Part2Hand bids
 
@@ -52,15 +51,15 @@ instance (Eq a, Hand a) => Ord (OrdHand a) where
     compare (OrdHand h) (OrdHand h') = comparing toType h h' <> comparing toCardValues h h'
 
 instance Hand Part1Hand where
-    toCardValues (Part1Hand h) = calculateCardValues sortedDeck1 h
+    toCardValues (Part1Hand h) = relativeCardValues sortedDeck1 h
     toType (Part1Hand h) = givenType h
 
 instance Hand Part2Hand where
-    toCardValues (Part2Hand h) = calculateCardValues sortedDeck2 h
+    toCardValues (Part2Hand h) = relativeCardValues sortedDeck2 h
     toType (Part2Hand h) = maximum . map (givenType . ($ h)) $ wildcardMakers
 
-calculateCardValues :: Cards -> Cards -> [Int]
-calculateCardValues sortedDeck = fromMaybe [] . (fmap . fmap) (+2) . (traverse . (flip elemIndex)) sortedDeck
+relativeCardValues :: Cards -> Cards -> [Int]
+relativeCardValues sortedDeck = fromMaybe [] . (traverse . (flip elemIndex)) sortedDeck
 
 replace :: Char -> Char -> String -> String
 replace x y = map (\a -> if (a == x) then y else a)
