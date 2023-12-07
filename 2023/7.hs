@@ -4,7 +4,7 @@ import Data.Maybe (fromMaybe)
 
 main :: IO ()
 main = do
-    bids <- map (makeBid . head . (zip <*> tail) . words) . lines <$> readFile "input_7.txt"
+    bids <- map (makeBid . words) . lines <$> readFile "input_7.txt"
     solve Part1Hand bids
     solve Part2Hand bids
 
@@ -17,8 +17,8 @@ newtype Part2Hand = Part2Hand Cards deriving (Eq, Show)
 type Amount = Int
 type Cards  = String
 
-makeBid :: (String, String) -> Bid
-makeBid (h, v) = Bid h (read v)
+makeBid :: [String] -> Bid
+makeBid [h, v] = Bid h (read v)
 
 getCards :: Bid -> Cards
 getCards (Bid h _) = h
