@@ -1,4 +1,3 @@
-import System.IO (readFile)
 import Data.Char (isDigit, digitToInt)
 import Data.List (isPrefixOf, tails)
 import Data.Foldable (asum)
