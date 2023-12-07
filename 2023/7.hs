@@ -65,7 +65,7 @@ replace :: Char -> Char -> String -> String
 replace x y = map (\a -> if (a == x) then y else a)
 
 wildcardSubstitutors :: [Cards -> Cards]
-wildcardSubstitutors = map (replace 'J') $ wildcardReplacements
+wildcardSubstitutors = map (replace 'J') wildcardReplacements
 
 givenType :: Cards -> Type
 givenType = freqType . sortBy (flip compare) . map length . group . sort
