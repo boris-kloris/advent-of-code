@@ -56,7 +56,7 @@ instance Hand Part1Hand where
 
 instance Hand Part2Hand where
     toCardValues (Part2Hand h) = relativeCardValues sortedDeck2 h
-    toType (Part2Hand h) = maximum . map (givenType . ($ h)) $ wildcardMakers
+    toType (Part2Hand h) = maximum . map (givenType . ($ h)) $ wildcardSubstitutors
 
 relativeCardValues :: Cards -> Cards -> [Int]
 relativeCardValues sortedDeck = fromMaybe [] . (traverse . (flip elemIndex)) sortedDeck
@@ -64,8 +64,8 @@ relativeCardValues sortedDeck = fromMaybe [] . (traverse . (flip elemIndex)) sor
 replace :: Char -> Char -> String -> String
 replace x y = map (\a -> if (a == x) then y else a)
 
-wildcardMakers :: [Cards -> Cards]
-wildcardMakers = map (replace 'J') $ wildcardReplacements
+wildcardSubstitutors :: [Cards -> Cards]
+wildcardSubstitutors = map (replace 'J') $ wildcardReplacements
 
 givenType :: Cards -> Type
 givenType = freqType . sortBy (flip compare) . map length . group . sort
