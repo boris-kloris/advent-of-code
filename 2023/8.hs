@@ -23,7 +23,7 @@ main = do
     print . foldr lcm 1 $ periods
 
 type Node = String
-type Step = Integer
+type Step = Int
 type Instructions = String
 type Turn = Char
 
@@ -44,6 +44,6 @@ getSteps driver stopPredicate (State node num instructions@(turn:turns))
     | stopPredicate node = State node num instructions
     | otherwise = getSteps driver stopPredicate $ State (driver turn node) (num+1) turns
 
-period :: (Turn -> Node -> Node) -> (Node -> Bool) -> State -> Integer
+period :: (Turn -> Node -> Node) -> (Node -> Bool) -> State -> Int
 period driver stopPredicate (State node num (turn:turns)) =
     step (getSteps driver stopPredicate (State (driver turn node) (num+1) turns)) - num
