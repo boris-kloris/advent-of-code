@@ -24,10 +24,9 @@ main = do
 
     -- THIS IS A HACK!!!
     putStrLn "Are all the offsets zero, and the 'Z' nodes are the only ones in the cycle?"
-    putStrLn $ if all (==0) offsets && endNodes == periodNodes
-        then "YES!!! The following answer is correct!"
-        else "No, The following answer can't be trusted. :("
-    print . foldr lcm 1 $ periodSteps
+    let condition = all (==0) offsets && endNodes == periodNodes
+    putStrLn $ if condition then "YES!!! The following answer is correct!" else "No, can't calculate. :("
+    print (if condition then Just . foldr lcm 1 $ periodSteps else Nothing)
 
 type Node = String
 type Step = Int
