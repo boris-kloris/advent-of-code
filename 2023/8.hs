@@ -13,14 +13,14 @@ main = do
     let startNodes = filter ((=='A') . last) . map fst $ nodes
     let endStates = map (getSteps driver ((=='Z') . last)) $ zipWith3 State startNodes (repeat 0) (repeat instructions)
     let periods   = map (period driver ((=='Z') . last)) endStates
-    let offsets   = zipWith mod (map step endStates) periods
+    let offsets   = zipWith mod (map step endStates) (map step periods)
 
     -- THIS IS A HACK!!!
-    putStrLn "Are all the offsets zero?"
-    putStrLn $ if all (==0) offsets
+    putStrLn "Are all the offsets zero, and the 'Z' nodes are the only ones in the cycle?"
+    putStrLn $ if all (==0) offsets && map node periods == map node endStates
         then "YES!!! The following answer is correct!"
         else "No, The following answer can't be trusted. :("
-    print . foldr lcm 1 $ periods
+    print . foldr lcm 1 . map step $ periods
 
 type Node = String
 type Step = Int
@@ -44,6 +44,6 @@ getSteps driver stopPredicate (State node num instructions@(turn:turns))
     | stopPredicate node = State node num instructions
     | otherwise = getSteps driver stopPredicate $ State (driver turn node) (num+1) turns
 
-period :: (Turn -> Node -> Node) -> (Node -> Bool) -> State -> Int
-period driver stopPredicate (State node num (turn:turns)) =
-    step (getSteps driver stopPredicate (State (driver turn node) (num+1) turns)) - num
+period :: (Turn -> Node -> Node) -> (Node -> Bool) -> State -> State
+period driver stopPredicate (State node _ (turn:turns)) =
+    getSteps driver stopPredicate (State (driver turn node) 1 turns)
