@@ -1,11 +1,11 @@
 main :: IO ()
 main = do
     sequences <- (map . map) (read :: String -> Int) . map words . lines <$> readFile "input_9.txt"
-    print . sum . map (sum . map last . extrapolate) $ sequences
-    print . sum . map (foldr (-) 0 . map head . extrapolate) $ sequences
+    print . sum . map (sum . map last . diffPyramid) $ sequences
+    print . sum . map (foldr (-) 0 . map head . diffPyramid) $ sequences
 
-extrapolate :: [Int] -> [[Int]]
-extrapolate = takeWhile (any (/= 0)) . iterate getDiffArray
+diffPyramid :: [Int] -> [[Int]]
+diffPyramid = (takeWhile . any) (/= 0) . iterate diffSequence
 
-getDiffArray :: [Int] -> [Int]
-getDiffArray = zipWith (-) =<< tail
+diffSequence :: [Int] -> [Int]
+diffSequence = zipWith (-) =<< tail
