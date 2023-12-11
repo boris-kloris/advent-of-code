@@ -1,6 +1,7 @@
 import Data.Map (Map, fromList, lookup)
-import Data.Maybe (fromMaybe)
+import Data.Maybe (fromMaybe, catMaybes)
 import Control.Applicative (liftA2)
+import Data.List (find)
 
 main :: IO ()
 main = do
@@ -9,13 +10,13 @@ main = do
     let instructions = cycle . head $ contents
     let nodes = map readLink . tail . tail $ contents
     let driver = follow . fromList $ nodes
-    print . step . getSteps driver (=="ZZZ") $ State "AAA" 0 instructions
+    print . fromMaybe 0 . fmap step . find ((=="ZZZ") . node) . iterate (getSteps driver) $ State "AAA" 0 instructions
 
     let endsWith c node = last node == c
     let startNodes = filter (endsWith 'A') . map fst $ nodes
     let startStates = zipWith3 State startNodes (repeat 0) (repeat instructions)
-    let endStates = map (getSteps driver (endsWith 'Z')) startStates
-    let periodicStates = map (period driver (endsWith 'Z')) endStates
+    let endStates = catMaybes . map (find ((endsWith 'Z') . node) . iterate (getSteps driver)) $ startStates
+    let periodicStates = catMaybes . map (find ((endsWith 'Z') . node) . iterate (period driver)) $ endStates
 
     let unpack = liftA2 (,) (map node) (map step)
     let (endNodes, endSteps) = unpack endStates
@@ -45,11 +46,8 @@ follow map turn node = if turn == 'L' then left else right
     where
         (left, right) = fromMaybe ("", "") . Data.Map.lookup node $ map
 
-getSteps :: (Turn -> Node -> Node) -> (Node -> Bool) -> State -> State
-getSteps driver stopPredicate (State node num instructions@(turn:turns))
-    | stopPredicate node = State node num instructions
-    | otherwise = getSteps driver stopPredicate $ State (driver turn node) (num+1) turns
+getSteps :: (Turn -> Node -> Node) -> State -> State
+getSteps driver (State node num instructions@(turn:turns)) = State (driver turn node) (num+1) turns
 
-period :: (Turn -> Node -> Node) -> (Node -> Bool) -> State -> State
-period driver stopPredicate (State node _ (turn:turns)) =
-    getSteps driver stopPredicate (State (driver turn node) 1 turns)
+period :: (Turn -> Node -> Node) -> State -> State
+period driver (State node _ (turn:turns)) = getSteps driver (State (driver turn node) 1 turns)
