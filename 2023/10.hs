@@ -1,7 +1,6 @@
 import Data.Maybe (fromMaybe)
 import Control.Applicative (Applicative(liftA2))
 import Data.Map (Map, fromList, lookup)
-import Data.List (find)
 
 main :: IO ()
 main = do
@@ -14,7 +13,7 @@ main = do
     let startNeighbours = map (move start) [Up .. Forth]
     let forwards = head . connected grid $ start
 
-    let loop = fromMaybe [] . find ((== start) . head) . iterate (buildLoop grid start) $ [forwards, start]
+    let loop = until ((== start) . head) (buildLoop grid start) [forwards, start]
 
     print . (`div` 2) . length $ loop
 

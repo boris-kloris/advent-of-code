@@ -1,7 +1,6 @@
 import Data.Map (Map, fromList, lookup)
 import Data.Maybe (fromMaybe, catMaybes)
 import Control.Applicative (liftA2)
-import Data.List (find)
 
 main :: IO ()
 main = do
@@ -10,13 +9,13 @@ main = do
     let instructions = cycle . head $ contents
     let nodes = map readLink . tail . tail $ contents
     let driver = follow . fromList $ nodes
-    print . fromMaybe 0 . fmap step . find ((=="ZZZ") . node) . iterate (getSteps driver) $ State "AAA" 0 instructions
+    print . step . until ((=="ZZZ") . node) (getSteps driver) $ State "AAA" 0 instructions
 
     let endsWith c node = last node == c
     let startNodes = filter (endsWith 'A') . map fst $ nodes
     let startStates = zipWith3 State startNodes (repeat 0) (repeat instructions)
-    let endStates = catMaybes . map (find ((endsWith 'Z') . node) . iterate (getSteps driver)) $ startStates
-    let periodicStates = catMaybes . map (find ((endsWith 'Z') . node) . iterate (period driver)) $ endStates
+    let endStates = map (until ((endsWith 'Z') . node) (getSteps driver)) startStates
+    let periodicStates = map (until ((endsWith 'Z') . node) (period driver)) endStates
 
     let unpack = liftA2 (,) (map node) (map step)
     let (endNodes, endSteps) = unpack endStates
