@@ -2,7 +2,7 @@
 
 import Data.Text (pack, splitOn, unpack, strip, Text)
 import Data.List (sortBy, foldl')
-import Control.Monad (liftM2)
+import Control.Applicative (liftA2)
 
 main :: IO ()
 main = do
@@ -12,7 +12,7 @@ main = do
     let maps  = map readMaps . tail $ sections
     print . minimum . map (($ maps) . foldl' mapOne) $ seeds
 
-    let seedRanges = liftM2 zip (indices even) (indices odd) $ seeds
+    let seedRanges = liftA2 zip (indices even) (indices odd) $ seeds
     print . minimum . map fst . (foldl' . flip) (concatMap . mapRange) seedRanges $ maps
 
 type Map = [[Int]]

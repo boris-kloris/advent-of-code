@@ -1,12 +1,12 @@
 import Data.Map (Map, fromList, lookup)
 import Data.Maybe (fromMaybe)
-import Control.Monad (liftM2)
+import Control.Applicative (liftA2)
 
 main :: IO ()
 main = do
     contents <- lines <$> readFile "input_8.txt"
 
-    let instructions = concat . repeat . head $ contents
+    let instructions = cycle . head $ contents
     let nodes = map readLink . tail . tail $ contents
     let driver = follow . fromList $ nodes
     print . step . getSteps driver (=="ZZZ") $ State "AAA" 0 instructions
@@ -17,7 +17,7 @@ main = do
     let endStates = map (getSteps driver (endsWith 'Z')) startStates
     let periodicStates = map (period driver (endsWith 'Z')) endStates
 
-    let unpack = liftM2 (,) (map node) (map step)
+    let unpack = liftA2 (,) (map node) (map step)
     let (endNodes, endSteps) = unpack endStates
     let (periodNodes, periodSteps) = unpack periodicStates
     let offsets = zipWith mod endSteps periodSteps
