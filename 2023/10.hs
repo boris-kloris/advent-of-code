@@ -14,9 +14,9 @@ main = do
     let startNeighbours = map (move start) [Up .. Forth]
     let forwards = head . connected grid $ start
 
-    let loop = fromMaybe [] . fmap snd . find fst . iterate (buildLoop grid start) $ (False, [forwards, start])
+    let loop = fromMaybe [] . find ((== start) . head) . iterate (buildLoop grid start) $ [forwards, start]
 
-    print . (`div` 2) . (+1) . length $ loop
+    print . (`div` 2) . length $ loop
 
 type Pipe         = Char
 data Direction    = Up | Down | Back | Forth
@@ -71,10 +71,10 @@ connected = liftA2 map move . canConnect
 connectsTo :: Grid -> Position -> [Position]
 connectsTo grid currPos = map (move currPos) . connects . getPipe grid $ currPos
 
-buildLoop :: Grid -> Position -> (Bool, [Position]) -> (Bool, [Position])
-buildLoop _  _  state@(True, _) = state
-buildLoop grid start (_, chain@(curr:prev:_)) =
-    if next == start then (True, chain) else (False, next:chain)
+buildLoop :: Grid -> Position -> [Position] -> [Position]
+buildLoop grid start chain@(curr:prev:_)
+    | curr == start = chain
+    | otherwise = next:chain
     where
         [nei1, nei2] = connectsTo grid curr
         next = if nei1 == prev then nei2 else nei1
