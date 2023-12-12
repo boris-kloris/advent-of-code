@@ -71,9 +71,7 @@ connectsTo :: Grid -> Position -> [Position]
 connectsTo grid currPos = map (move currPos) . connects . getPipe grid $ currPos
 
 buildLoop :: Grid -> Position -> [Position] -> [Position]
-buildLoop grid start chain@(curr:prev:_)
-    | curr == start = chain
-    | otherwise = next:chain
+buildLoop grid start chain@(curr:prev:_) = next:chain
     where
         [nei1, nei2] = connectsTo grid curr
         next = if nei1 == prev then nei2 else nei1
