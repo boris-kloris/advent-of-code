@@ -17,6 +17,9 @@ main = do
 
     print . (`div` 2) . length $ loop
 
+    -- Solve Part 2
+    print ""
+
 type Pipe         = Char
 data Direction    = Up | Down | Back | Forth
     deriving (Eq, Show, Enum)

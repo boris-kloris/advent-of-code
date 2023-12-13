@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+
 import Data.Text (splitOn, pack, unpack)
 import Control.Applicative (Applicative(liftA2))
 import Data.List (group, intercalate)
@@ -9,7 +10,9 @@ main = do
     print . sum . map arrangements $ puzzles
 
     let newPuzzles = map makeNewPuzzle puzzles
-    print ""
+
+    -- Solve Part 2
+    print "" 
 
 makePuzzle :: [String] -> (String, [Int])
 makePuzzle [springs, nums] = (springs, map (read . unpack) . splitOn "," . pack $ nums)
@@ -24,4 +27,3 @@ substitute (x:ls)   = map (x:) (substitute ls)
 
 makeNewPuzzle :: (String, [Int]) -> (String, [Int])
 makeNewPuzzle (row, groups) = (intercalate "?" . replicate 5 $ row, concat . replicate 5 $ groups)
-
