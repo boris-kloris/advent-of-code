@@ -1,8 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 import Data.Text (pack, splitOn, unpack)
-import Data.List (transpose, tails, find)
-import Data.Maybe (fromMaybe)
+import Data.List (transpose)
 import Control.Arrow (first)
 
 main :: IO ()
