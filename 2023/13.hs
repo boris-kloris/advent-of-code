@@ -25,10 +25,8 @@ countReflections2 :: [String] -> Int
 countReflections2 ls =
       fromMaybe 0
     . find check
-    . map (\(i, j) -> (i + j + 1) `div` 2)
-    . map fst
-    . filter (\((i,j), diff) -> (i + j) `mod` 2 == 1 && diff == 1)
-    . map (\((i, a), (j, b)) -> ((i, j), diffNum a b))
+    . map (\((i, _), (j, _)) -> (i + j + 1) `div` 2)
+    . filter (\((i, a), (j, b)) -> (i + j) `mod` 2 == 1 && diffNum a b == 1)
     . concatMap (map =<< (,) . head)
     . init
     . tails
