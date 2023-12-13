@@ -26,7 +26,8 @@ countReflections2 ls =
       fromMaybe 0
     . find check
     . map (\(i, j) -> (i + j + 1) `div` 2)
-    . map fst . filter (\((i,j), diff) -> (i + j) `mod` 2 == 1 && diff == 1)
+    . map fst
+    . filter (\((i,j), diff) -> (i + j) `mod` 2 == 1 && diff == 1)
     . map (\((i, a), (j, b)) -> ((i, j), diffNum a b))
     . concatMap (map =<< (,) . head)
     . init
