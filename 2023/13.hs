@@ -18,8 +18,8 @@ countReflections smudges ls =
       sum
     . map (length . fst)
     . filter (\(a, b) -> (== smudges) . sum $ zipWith diffNum a b)
-    . map (first reverse)
-    . map (($ ls) . splitAt)
-    $ [1..(length ls - 1)]
+    . takeWhile (not . null . snd)
+    . map (first reverse . ($ ls) . splitAt)
+    $ [1..]
     where
         diffNum x y = length . filter id $ zipWith (/=) x y
