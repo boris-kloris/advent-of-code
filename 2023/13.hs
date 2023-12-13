@@ -14,11 +14,25 @@ solve :: ([String] -> Int) -> [String] -> Int
 solve countReflections pattern = countReflections pattern * 100 + countReflections (transpose pattern)
 
 countReflections :: [String] -> Int
-countReflections ls = sum . map (length . fst). filter (\(a, b) -> and (zipWith (==) (reverse a) b)) . map (($ ls) . splitAt) $ [1..(length ls - 1)]
+countReflections ls =
+      sum
+    . map (length . fst)
+    . filter (\(a, b) -> and (zipWith (==) (reverse a) b))
+    . map (($ ls) . splitAt)
+    $ [1..(length ls - 1)]
 
 countReflections2 :: [String] -> Int
-countReflections2 ls = fromMaybe 0 . find (check ls) . map (\(i, j) -> (i + j + 1) `div` 2) . map fst . filter (\((i,j), diff) -> (i + j) `mod` 2 == 1 && diff == 1) $ diffs
+countReflections2 ls =
+      fromMaybe 0
+    . find check
+    . map (\(i, j) -> (i + j + 1) `div` 2)
+    . map fst . filter (\((i,j), diff) -> (i + j) `mod` 2 == 1 && diff == 1)
+    . map (\((i, a), (j, b)) -> ((i, j), diffNum a b))
+    . concatMap (map =<< (,) . head)
+    . init
+    . tails
+    . zip [0..]
+    $ ls
     where
-        diffs = map (\((i, a), (j, b)) -> ((i, j), diffNum a b)) . concatMap (map =<< (,) . head) . init . tails $ zip [0..] ls
-        check ls at = (\(a, b) -> diffNum (reverse a) b == 1) (splitAt at ls)
+        check pos = (\(a, b) -> diffNum (reverse a) b == 1) (splitAt pos ls)
         diffNum x y = length . filter id $ zipWith (/=) x y
