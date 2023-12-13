@@ -3,35 +3,24 @@
 import Data.Text (pack, splitOn, unpack)
 import Data.List (transpose, tails, find)
 import Data.Maybe (fromMaybe)
+import Control.Arrow (first)
 
 main :: IO ()
 main = do
     patterns <- map (lines . unpack). splitOn "\n\n". pack <$> readFile "input_13.txt"
-    print . sum . map (solve countReflections) $ patterns
-    print . sum . map (solve countReflections2) $ patterns
+    print . sum . map (solve 0) $ patterns
+    print . sum . map (solve 1) $ patterns
 
-solve :: ([String] -> Int) -> [String] -> Int
-solve countReflections pattern = countReflections pattern * 100 + countReflections (transpose pattern)
+solve :: Int -> [String] -> Int
+solve smudges pattern = countReflections smudges pattern * 100 + countReflections smudges (transpose pattern)
 
-countReflections :: [String] -> Int
-countReflections ls =
+countReflections :: Int -> [String] -> Int
+countReflections smudges ls =
       sum
     . map (length . fst)
-    . filter (\(a, b) -> and (zipWith (==) (reverse a) b))
+    . filter (\(a, b) -> (== smudges) . sum $ zipWith diffNum a b)
+    . map (first reverse)
     . map (($ ls) . splitAt)
     $ [1..(length ls - 1)]
-
-countReflections2 :: [String] -> Int
-countReflections2 ls =
-      fromMaybe 0
-    . find check
-    . map (\((i, _), (j, _)) -> (i + j + 1) `div` 2)
-    . filter (\((i, a), (j, b)) -> (i + j) `mod` 2 == 1 && diffNum a b == 1)
-    . concatMap (map =<< (,) . head)
-    . init
-    . tails
-    . zip [0..]
-    $ ls
     where
-        check pos = (\(a, b) -> diffNum (reverse a) b == 1) (splitAt pos ls)
         diffNum x y = length . filter id $ zipWith (/=) x y
